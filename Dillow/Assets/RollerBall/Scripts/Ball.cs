@@ -30,7 +30,7 @@ namespace UnityStandardAssets.Vehicles.Ball
         }
 
 
-        public void Move(Vector3 moveDirection, bool jump)
+        public void Move(Vector3 moveDirection)
         {
             //print("MoveDirection: " + moveDirection);
             // If using torque to rotate the ball...
@@ -59,29 +59,26 @@ namespace UnityStandardAssets.Vehicles.Ball
                 //adjustedJumpHeight = m_JumpHeight;
                 jumpVector = Vector3.up;
             }
+		}
 
-
-
+        public void Jump() {
             // If on the ground and jump is pressed...
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position, -Vector3.up, out hit,  k_GroundRayLength))
+            if (Physics.Raycast(transform.position, -Vector3.up, out hit, k_GroundRayLength))
             {
-                if (jump) {
-					print("JUMP VECTOR: " + jumpVector);
-					//float jumpVelocity = 2 * -Physics.gravity.y * adjustedJumpHeight;
-					//float jumpVelocity = adjustedJumpHeight;
-
-					m_Rigidbody.AddForce(jumpVector * m_JumpPower, ForceMode.Impulse);
-                }
+                    m_Rigidbody.AddForce(jumpVector * m_JumpPower, ForceMode.Impulse);
             }
 
-			if (m_Rigidbody.velocity.y < 0f) {
-				m_Rigidbody.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
-			} if (m_Rigidbody.velocity.y > 0f && !jump) {
-				m_Rigidbody.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1f) * Time.deltaTime;
-			}
-		}
+            if (m_Rigidbody.velocity.y < 0f)
+            {
+                m_Rigidbody.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
+            }
+            if (m_Rigidbody.velocity.y > 0f)
+            {
+                m_Rigidbody.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1f) * Time.deltaTime;
+            }
+        }
 
         public void OnDrawGizmos () {
             Gizmos.color = Color.blue;

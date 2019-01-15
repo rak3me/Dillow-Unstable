@@ -61,8 +61,15 @@ namespace UnityStandardAssets.Vehicles.Ball
         private void FixedUpdate()
         {
             // Call the Move function of the ball controller
-            ball.Move(move, jump);
-            jump = false;
+            if (move.magnitude > 0f)
+            {
+                ball.Move(move);
+            }
+            if (jump)
+            {
+                ball.Jump();
+                jump = false;
+            }
         }
     }
 }
