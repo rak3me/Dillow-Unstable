@@ -41,14 +41,13 @@ namespace UnityStandardAssets.Vehicles.Ball
 
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
-			//jump = Input.GetAxisRaw("Jump") > 0f;
-			jump = Input.GetKeyDown(KeyCode.Space);
+			jump = Input.GetAxisRaw("Jump") > 0f;
 
             // calculate move direction
             if (cam != null)
             {
                 // calculate camera relative direction to move:
-                camForward = Vector3.Scale(cam.forward, new Vector3(1, 0, 1)).normalized;
+                camForward = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up); //Vector3.Scale(cam.forward, new Vector3(1, 0, 1)).normalized;
                 move = (v*camForward + h*cam.right).normalized;
             }
             else

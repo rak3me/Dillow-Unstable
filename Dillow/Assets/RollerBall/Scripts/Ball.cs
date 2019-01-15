@@ -6,6 +6,7 @@ namespace UnityStandardAssets.Vehicles.Ball
     public class Ball : MonoBehaviour
     {
         [SerializeField] private float m_MovePower = 5; // The force added to the ball to move it.
+        [SerializeField] private float m_JumpPower = 5;
         [SerializeField] private bool m_UseTorque = true; // Whether or not to use torque to move the ball.
         [SerializeField] private float m_MaxAngularVelocity = 25; // The maximum velocity the ball can rotate at.
 
@@ -71,7 +72,7 @@ namespace UnityStandardAssets.Vehicles.Ball
 					//float jumpVelocity = 2 * -Physics.gravity.y * adjustedJumpHeight;
 					//float jumpVelocity = adjustedJumpHeight;
 
-					m_Rigidbody.AddForce(jumpVector * 2000f);
+					m_Rigidbody.AddForce(jumpVector * m_JumpPower, ForceMode.Impulse);
                 }
             }
 
