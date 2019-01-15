@@ -12,6 +12,7 @@ Gaia.meta
 Gaia\ Dependencies.meta
 
 PostProcessingVolume/
+Assets/PostProcessingVolume/
 
 # Visual Studio cache directory
 .vs/
