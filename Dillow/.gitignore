@@ -5,10 +5,12 @@
 [Bb]uilds/
 Assets/AssetStoreTools*
 Assets/Exclusive\ Imports/
+
 Gaia/
 Gaia\ Dependencies/
 Gaia.meta
 Gaia\ Dependencies.meta
+PostProcessingVolume/
 
 # Visual Studio cache directory
 .vs/
