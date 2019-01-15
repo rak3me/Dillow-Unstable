@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace UnityStandardAssets.Vehicles.Ball
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class Ball : MonoBehaviour
     {
         [SerializeField] private float m_MovePower = 5; // The force added to the ball to move it.
@@ -24,7 +25,7 @@ namespace UnityStandardAssets.Vehicles.Ball
         {
             m_Rigidbody = GetComponent<Rigidbody>();
             // Set the maximum angular velocity.
-            GetComponent<Rigidbody>().maxAngularVelocity = m_MaxAngularVelocity;
+            m_Rigidbody.maxAngularVelocity = m_MaxAngularVelocity;
             Physics.gravity = -Vector3.up * 20f;
             jumpVector = Vector3.up;
         }
