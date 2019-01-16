@@ -68,7 +68,7 @@ public class Cannon : MonoBehaviour {
             clockwise = false;
         }
 
-        print ("Aim angle: " + aimAngle + "\tRotate angle: " + rotateAngle);
+        //print ("Aim angle: " + aimAngle + "\tRotate angle: " + rotateAngle);
 
         if (null == GetComponent<AudioSource> ()) {
             gameObject.AddComponent<AudioSource> ();
@@ -89,7 +89,7 @@ public class Cannon : MonoBehaviour {
 			}
 
 			if (skipAnimations) {
-				print("SUCK ME OFF");
+				//print("SUCK ME OFF");
 				firing = true;
 				projectile.gameObject.AddComponent<FollowPath>();
 				projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true);
@@ -114,11 +114,11 @@ public class Cannon : MonoBehaviour {
 
         float timeElapsed = 0f;
 
-        print ("Clockwise: " + clockwise);
+        //print ("Clockwise: " + clockwise);
 
         float angleTraversed = 0;
 
-        print("Rotating " + rotateAngle);
+        //print("Rotating " + rotateAngle);
         while (angleTraversed < rotateAngle) {
             transform.Rotate(transform.up, (clockwise ? 1 : -1) * rotateSpeed * Time.deltaTime);
             angleTraversed += rotateSpeed * Time.deltaTime;
@@ -136,7 +136,7 @@ public class Cannon : MonoBehaviour {
         timeElapsed += 3f;
 
 
-        print("Aiming " + aimAngle);
+        //print("Aiming " + aimAngle);
         while (angleTraversed < aimAngle) {
             //barrel.Rotate(barrel.transform.right, rotateSpeed * Time.deltaTime);
             barrel.localEulerAngles += Vector3.right * rotateSpeed * Time.deltaTime;
@@ -169,7 +169,7 @@ public class Cannon : MonoBehaviour {
 		if (null != mouthCamera) {
 			mouthCamera.SetActive(false);
 		}
-		print("BOOM! " + velocity + " MPS");
+		//print("BOOM! " + velocity + " MPS");
 
         if (null != shotSound) {
             GetComponent<AudioSource> ().clip = shotSound;
@@ -188,7 +188,7 @@ public class Cannon : MonoBehaviour {
 
 
 
-		print("Resetting aim " + aimAngle);
+		//print("Resetting aim " + aimAngle);
         while (angleTraversed < aimAngle) {
             //barrel.Rotate(barrel.transform.right, -rotateSpeed * Time.deltaTime);
             barrel.localEulerAngles += Vector3.right * -rotateSpeed * Time.deltaTime;
@@ -199,7 +199,7 @@ public class Cannon : MonoBehaviour {
         angleTraversed = 0;
         yield return new WaitForSeconds(3f / speedupMultiplier);
 
-        print("Resetting angle " + rotateAngle);
+        //print("Resetting angle " + rotateAngle);
         while (angleTraversed < rotateAngle) {
             transform.Rotate(transform.up, (clockwise ? -1 : 1) * rotateSpeed  * Time.deltaTime);
             angleTraversed += rotateSpeed * Time.deltaTime;
