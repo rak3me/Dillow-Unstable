@@ -81,11 +81,11 @@ namespace UnityStandardAssets.Vehicles.Ball
             }
         }
 
-        public void OnDrawGizmos () {
-            Gizmos.color = Color.blue;
-            //Gizmos.DrawRay(transform.position, transform.position + jumpVector * m_JumpPower);
-            //Vector3 cross = Vector3.Cross(m_Rigidbody.angularVelocity, m_Rigidbody.velocity);
-            //Gizmos.DrawRay(transform.position, jumpVector * adjustedJumpHeight);
-        }
+        //public void OnDrawGizmos () {
+        //    Gizmos.color = Color.blue;
+        //    //Gizmos.DrawRay(transform.position, transform.position + jumpVector * m_JumpPower);
+        //    //Vector3 cross = Vector3.Cross(m_Rigidbody.angularVelocity, m_Rigidbody.velocity);
+        //    //Gizmos.DrawRay(transform.position, jumpVector * adjustedJumpHeight);
+        //}
     }
 }

@@ -7,14 +7,21 @@ public class CannonPath : MonoBehaviour {
 
 	[Header("Node Info")]
     public Transform start;
+	private Vector3 startPosition;
     public Transform mid;
-    public Transform end;
+	private Vector3 midPosition;
+	public Transform end;
+	private Vector3 endPosition;
 	public int resolution = 20;
 
 	[Header("Automation Info")]
+	[Tooltip("Must have a GameObject with the name 'Barrel'")]
+	public bool autoConfigureStartpoint = false;
 	public bool autoConfigureMidpoint = false;
 	[Tooltip("Midpoint will be double this value")] 
 	public float curveHeight = 200f;
+	public bool autoConfigureEndpoint = false;
+	public Transform endTarget;
 
 	[Header("Debug Info")]
 	public bool drawNodes = true;
@@ -22,11 +29,19 @@ public class CannonPath : MonoBehaviour {
 	public bool drawPath = true;
 	public float pathRadius = 10f;
 
-	public Vector3[] path;
+	public Vector3[] pathNodes;
 
-    private void Update () {
-		if (resolution < 3) resolution = 3;
+	private void Start () {
+		if (Application.isPlaying) {
+			if (autoConfigureEndpoint) {
+				autoConfigureEndpoint = false;
+			}
 
+			UpdatePath();
+		}
+	}
+
+	private void Update () {
 		if (null == start) {
 			start = transform.Find("Start");
 
@@ -49,20 +64,39 @@ public class CannonPath : MonoBehaviour {
 			}
 		}
 
+		if (resolution < 3) resolution = 3;
+
 		if (false == Application.isPlaying) {
+			if (true == autoConfigureStartpoint) {
+				Transform barrel = transform.parent.Find("Barrel");
+
+				if (null == barrel) {
+					autoConfigureStartpoint = false;
+					Debug.LogWarning("Cannot autoconfigure startpoint! Make sure there is a Barrel attached to parent.");
+				} else {
+					start.position = barrel.position;
+				}
+			}
+
 			if (true == autoConfigureMidpoint) {
 				Vector3 targetPosition = (start.position + end.position) / 2;
 				targetPosition.y = curveHeight * 2f;
 				mid.position = targetPosition;
 			}
 
+			if (true == autoConfigureEndpoint && null != endTarget) {
+				end.position = endTarget.position;
+			}
 			UpdatePath();
 		}
 	}
 
 	public void UpdatePath () {
         if (start && mid && end) {
-            path = GetPath (start.position, mid.position, end.position, resolution);
+			startPosition = start.position;
+			midPosition = mid.position;
+			endPosition = end.position;
+            pathNodes = GetPath (start.position, mid.position, end.position, resolution);
         }
     }
 
@@ -80,24 +114,24 @@ public class CannonPath : MonoBehaviour {
 
     private void OnDrawGizmos () {
 		if (true == drawNodes) {
-			if (true == start) {
+			if (null != start && false == autoConfigureStartpoint) {
 				Gizmos.color = Color.green;
-				Gizmos.DrawSphere(start.position, nodeRadius);
+				Gizmos.DrawSphere(startPosition, nodeRadius);
 			}
-			if (true == mid) {
+			if (null != mid && false == autoConfigureMidpoint) {
 				Gizmos.color = Color.blue;
-				Gizmos.DrawSphere(mid.position, nodeRadius);
+				Gizmos.DrawSphere(midPosition, nodeRadius);
 			}
-			if (true == end) {
+			if (null != end) {
 				Gizmos.color = Color.red;
-				Gizmos.DrawSphere(end.position, nodeRadius);
+				Gizmos.DrawSphere(endPosition, nodeRadius);
 			}
 		}
 
-        if (true == drawPath && path.Length > 1) {
+        if (true == drawPath && pathNodes.Length > 1) {
             Gizmos.color = Color.cyan;
-            for (int i = 0; i < path.Length - 1; i++) {
-                DrawLine (path[i], path[i + 1], 10f);
+            for (int i = 0; i < pathNodes.Length - 1; i++) {
+                DrawLine (pathNodes[i], pathNodes[i + 1], 10f);
             }
         }
     }
