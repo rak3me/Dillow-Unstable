@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.400257, y: -3.1312122, z: -0.99219}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -123,10 +123,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MovePower: 50
+  m_JumpPower: 5
   m_UseTorque: 1
   m_MaxAngularVelocity: 100
-  m_JumpHeight: 2
-  adjustedJumpHeight: 0
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
+  skidMultiplier: 4
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 0
