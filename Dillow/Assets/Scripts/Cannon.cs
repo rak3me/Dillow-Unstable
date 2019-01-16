@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Cannon : MonoBehaviour {
@@ -7,19 +6,21 @@ public class Cannon : MonoBehaviour {
     Vector3 origin;
     Vector3 target;
     Vector3 apex;
-    [SerializeField] private float shotHeight = 50;
     [SerializeField] private float rotateSpeed = 30;
 
     [SerializeField] private AudioClip shotSound;
     [SerializeField] private AudioClip music;
 
+
+
 	[SerializeField] private float speedupMultiplier = 1f;
 
     float aimAngle;
     float rotateAngle;
-    float velocity;
+	[SerializeField] private float velocity;
 
-    bool firing;
+	[SerializeField] bool skipAnimations = false;
+	bool firing;
     bool clockwise;
 	bool inoperable = false;
 
@@ -87,7 +88,14 @@ public class Cannon : MonoBehaviour {
 				cinematicCamera.SetActive(true);
 			}
 
-			StartCoroutine(Fire (aimAngle, rotateAngle, velocity, projectile));
+			if (skipAnimations) {
+				print("SUCK ME OFF");
+				firing = true;
+				projectile.gameObject.AddComponent<FollowPath>();
+				projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true);
+			} else {
+				StartCoroutine(Fire(aimAngle, rotateAngle, velocity, projectile));
+			}
         }
     }
 
@@ -141,7 +149,7 @@ public class Cannon : MonoBehaviour {
             timeElapsed += Time.deltaTime;
         }
 
-		yield return new WaitForSeconds(Mathf.Max(5f, timeToWait - timeElapsed));
+		yield return new WaitForSeconds(Mathf.Max(5f, timeToWait - timeElapsed - 2f));
 
 		if (null != cinematicCamera) {
 			cinematicCamera.SetActive(false);
@@ -151,7 +159,7 @@ public class Cannon : MonoBehaviour {
 			mouthCamera.SetActive(true);
 		}
 
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(2f);
 
 		GetComponentInChildren<MouthController>().SetExpression(MouthController.MouthState.smile);
 
@@ -172,7 +180,7 @@ public class Cannon : MonoBehaviour {
 		//projectile.velocity = Vector3.zero;
 		//projectile.useGravity = false;
 		projectile.gameObject.AddComponent<FollowPath>();
-		projectile.GetComponent<FollowPath>().SetPath(pathNodes, 200f, true);
+		projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true);
 
 
         angleTraversed = 0;

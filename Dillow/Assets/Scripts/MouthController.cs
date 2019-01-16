@@ -125,7 +125,7 @@ public class MouthController : MonoBehaviour {
                         complete = true;
                     break;
 				case MouthState.eat:
-					print("Open: " + open + "\tClose: " + close);
+					//print("Open: " + open + "\tClose: " + close);
 					if (t > 1f) {
 						open = Mathf.Max(0f, 100 * Mathf.Cos(2 * 2 * Mathf.PI * (t - 1f)));
 						close = Mathf.Max(0f, -100 * Mathf.Cos(2 * 2 * Mathf.PI * (t - 1f)));

@@ -88,6 +88,11 @@ public class CannonPath : MonoBehaviour {
 				end.position = endTarget.position;
 			}
 			UpdatePath();
+		} else {
+			if (Input.GetKeyDown(KeyCode.F)) {
+				GameObject.Find("RollerBall").AddComponent<FollowPath>();
+				GameObject.Find("RollerBall").GetComponent<FollowPath>().SetPath(pathNodes, 20f, true);
+			}
 		}
 	}
 

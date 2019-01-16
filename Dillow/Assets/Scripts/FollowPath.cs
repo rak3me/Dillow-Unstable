@@ -6,6 +6,8 @@ using UnityEngine;
 public class FollowPath : MonoBehaviour {
 
 	public float speed = 20f;
+	private Vector3 horizontalVelocity;
+	private Vector3 velocity;
 
 	public int currentIndex;
 	private int lastIndex;
@@ -30,6 +32,8 @@ public class FollowPath : MonoBehaviour {
 	public void SetPath (Vector3[] nodes, float speed) {
 		currentIndex = 1;
 		this.speed = speed;
+		velocity = (nodes[1] - nodes[0]).normalized * speed;
+		horizontalVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
 		pathNodes = nodes;
 		lastIndex = nodes.Length;
 		target = nodes[0];
@@ -38,6 +42,8 @@ public class FollowPath : MonoBehaviour {
 	public void SetPath (Vector3[] nodes, float speed, bool autoTraverse) {
 		currentIndex = 1;
 		this.speed = speed;
+		velocity = (nodes[1] - nodes[0]).normalized * speed;
+		horizontalVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
 		pathNodes = nodes;
 		lastIndex = nodes.Length;
 		target = nodes[0];
@@ -54,12 +60,11 @@ public class FollowPath : MonoBehaviour {
 		if (false == traversing) return;
 
 		if (pathNodes.Length > 0) {
-			float t = 0f;
 			if (currentIndex < lastIndex) {
 				target = pathNodes[currentIndex];
-				//transform.up = Vector3.SmoothDamp(transform.up, (target - transform.position).normalized, ref dampVel, 0.3f);
 
-				guide.position += (target - pathNodes[currentIndex - 1]).normalized * speed * Time.fixedDeltaTime;
+				velocity = Vector3.Project(horizontalVelocity, target - pathNodes[currentIndex - 1]);
+				guide.position += velocity * speed * Time.fixedDeltaTime;
 
 				if ((guide.position - target).magnitude < 2 * speed * Time.fixedDeltaTime) {
 					guide.position = target;
