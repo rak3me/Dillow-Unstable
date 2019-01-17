@@ -38,7 +38,16 @@ public class Ball_Controller : MonoBehaviour
         // Get the axis and jump input.
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        jump = Input.GetButtonDown("Jump") ? 1 : 0;
+        jump = (int)Input.GetAxisRaw("Jump");
+
+        if (jump == 0)
+        {
+            jump = Input.GetButtonUp("Jump") ? -1 : 0;
+        }
+        else if (jump == 1)
+        {
+            jump = Input.GetButtonDown("Jump") ? 2 : 1;
+        }
 
         // calculate move direction
         if (cam != null)
@@ -57,7 +66,6 @@ public class Ball_Controller : MonoBehaviour
     private void FixedUpdate()
     {
         if (can_input)
-            body.Input(move.magnitude > 0f, move,
-                (Input.GetButtonUp("Jump")) ? -1 : jump);
+            body.Input(move.magnitude > 0f, move, jump);
     }
 }

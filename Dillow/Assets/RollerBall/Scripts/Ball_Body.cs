@@ -8,27 +8,30 @@ public delegate void MoveDel(bool move, Vector3 dir, int jump);
 [RequireComponent(typeof(Rigidbody))]
 public class Ball_Body : MonoBehaviour
 {
+
+    [Header("Rolling")]
     public float move_power = 5f;
     public float max_speed = 25f;
 
+    [Header("Jumping")]
     public float jump_power = 5f;
     public float jump_time = 0.5f;
     private float jump_time_timer;
-    public float speed_jump_threshold = 10f;
+    [HideInInspector] public float speed_jump_threshold = 10f;
     private readonly float jump_leeway = 0.2f;
     private float jump_leeway_timer;
     private int collision_count;
 
-    private float extended_jump_multiplier = 5f;
     private float jump_multiplier = 2f;
     private float fall_multiplier = 2.5f;
     private Vector3 jump_vector;
 
     public event MoveDel MoveEvent;
-    public bool can_move = true;
-
-    public Rigidbody rb;
+    [HideInInspector ]public bool can_move = true;
     private int priority = 0;
+
+    [HideInInspector] public Rigidbody rb;
+    [Header("Locking")]
     public GameObject lock_enemy;
 
     [HideInInspector] public bool jump_ready;
@@ -109,7 +112,7 @@ public class Ball_Body : MonoBehaviour
 
     private void OnJump(bool move, Vector3 dir, int jump)
     {
-        if (jump == 1 && jump_ready && CheckPriority(1))
+        if (jump == 2 && jump_ready && CheckPriority(1))
         {
             rb.AddForce(jump_vector * jump_power, ForceMode.Impulse);
             just_jumped = true;
@@ -117,9 +120,9 @@ public class Ball_Body : MonoBehaviour
         }
 
         if (mid_air && !air_ready) {
-            if (jump == 0 && jump_time_timer > 0f && rb.velocity.y > 0f)
+            if (jump == 1 && jump_time_timer > 0f && rb.velocity.y > 0f)
             {
-                rb.AddForce(jump_vector * jump_power * extended_jump_multiplier);
+                rb.AddForce(jump_vector * jump_power);
                 jump_time_timer -= Time.deltaTime;
             }
             else if (jump == -1)
@@ -133,7 +136,10 @@ public class Ball_Body : MonoBehaviour
     {
         if (collision.contacts[0].point.y < transform.position.y) {
             if (just_jumped)
+            {
                 just_jumped = false;
+                mid_air = true;
+            }
             else if (!jump_ready)
                 OnGround();
         }
