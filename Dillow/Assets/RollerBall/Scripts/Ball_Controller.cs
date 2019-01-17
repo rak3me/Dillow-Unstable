@@ -12,6 +12,7 @@ public class Ball_Controller : MonoBehaviour
     private Transform cam; // A reference to the main camera in the scenes transform
     private Vector3 camForward; // The current forward direction of the camera
     private int jump; // whether the jump button is currently pressed
+    private int action;
 
     public bool can_input = true;
 
@@ -38,16 +39,8 @@ public class Ball_Controller : MonoBehaviour
         // Get the axis and jump input.
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        jump = (int)Input.GetAxisRaw("Jump");
-
-        if (jump == 0)
-        {
-            jump = Input.GetButtonUp("Jump") ? -1 : 0;
-        }
-        else if (jump == 1)
-        {
-            jump = Input.GetButtonDown("Jump") ? 2 : 1;
-        }
+        GetButton(ref jump, "Jump");
+        GetButton(ref action, "Action");
 
         // calculate move direction
         if (cam != null)
@@ -66,6 +59,20 @@ public class Ball_Controller : MonoBehaviour
     private void FixedUpdate()
     {
         if (can_input)
-            body.Input(move.magnitude > 0f, move, jump);
+            body.Input(move.magnitude > 0f, move, jump, action);
+    }
+
+    private void GetButton(ref int button, string axisName)
+    {
+        button = (int)Input.GetAxisRaw(axisName);
+
+        if (button == 0)
+        {
+            button = Input.GetButtonUp(axisName) ? -1 : 0;
+        }
+        else if (jump == 1)
+        {
+            button = Input.GetButtonDown(axisName) ? 2 : 1;
+        }
     }
 }

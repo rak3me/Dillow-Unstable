@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void MoveDel(bool move, Vector3 dir, int jump);
+public delegate void MoveDel(bool move, Vector3 dir, int jump, int action);
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -69,11 +69,11 @@ public class Ball_Body : MonoBehaviour
         }
     }
 
-    public void Input(bool move, Vector3 dir, int jump)
+    public void Input(bool move, Vector3 dir, int jump, int action)
     {
        if (can_move)
         {
-            MoveEvent(move, dir, jump);
+            MoveEvent(move, dir, jump, action);
         }
     }
 
@@ -88,7 +88,7 @@ public class Ball_Body : MonoBehaviour
     }
 
 
-    private void OnMove(bool move, Vector3 dir, int jump)
+    private void OnMove(bool move, Vector3 dir, int jump, int action)
     {
        if (move)
         {
@@ -110,7 +110,7 @@ public class Ball_Body : MonoBehaviour
             jump_vector = Vector3.up;
     }
 
-    private void OnJump(bool move, Vector3 dir, int jump)
+    private void OnJump(bool move, Vector3 dir, int jump, int action)
     {
         if (jump == 2 && jump_ready && CheckPriority(1))
         {
@@ -180,8 +180,10 @@ public class Ball_Body : MonoBehaviour
         }
 
         jump_leeway_timer = jump_leeway;
-        if (mid_air)
+        if (mid_air && jump_ready) {
             jump_ready = false;
+            air_ready = true;
+        }
     }
 
     #endregion
