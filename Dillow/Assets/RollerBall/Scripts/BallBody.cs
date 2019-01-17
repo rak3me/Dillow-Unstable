@@ -9,14 +9,15 @@ public class BallBody : MonoBehaviour
 {
 
     [Header("Rolling")]
-    public float move_power = 5f;
-    public float max_speed = 25f;
+    public float move_power = 200f;
+    public float max_roll_speed = 50f;
+    public float max_speed = 50f;
 
     [Header("Jumping")]
     public float jump_power = 5f;
     public float jump_time = 0.5f;
     private float jump_time_timer;
-    [HideInInspector] public float speed_jump_threshold = 10f;
+    public float speed_jump_threshold = 20f;
     private readonly float jump_leeway = 0.2f;
     private float jump_leeway_timer;
     private int collision_count;
@@ -42,7 +43,7 @@ public class BallBody : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.maxAngularVelocity = max_speed;
+        rb.maxAngularVelocity = max_roll_speed;
         jump_vector = Vector3.up;
         jump_leeway_timer = jump_leeway;
         MoveEvent += OnMove;
@@ -53,6 +54,10 @@ public class BallBody : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (rb.velocity.magnitude > max_speed)
+        {
+            rb.velocity = rb.velocity.normalized * max_speed;
+        }
         OnFall();
     }
 
