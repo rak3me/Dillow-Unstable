@@ -4,9 +4,8 @@ using UnityEngine;
 
 public delegate void MoveDel(bool move, Vector3 dir, int jump, int action);
 
-
 [RequireComponent(typeof(Rigidbody))]
-public class Ball_Body : MonoBehaviour
+public class BallBody : MonoBehaviour
 {
 
     [Header("Rolling")]
@@ -79,7 +78,7 @@ public class Ball_Body : MonoBehaviour
 
     public bool CheckPriority(int priority, bool set = false)
     {
-        if (priority > this.priority) {
+        if (priority >= this.priority) {
             if (set)
                 this.priority = priority;
             return true;
@@ -87,6 +86,10 @@ public class Ball_Body : MonoBehaviour
         return false;
     }
 
+    public void ResetPriority()
+    {
+        priority = 0;
+    }
 
     private void OnMove(bool move, Vector3 dir, int jump, int action)
     {
@@ -173,18 +176,16 @@ public class Ball_Body : MonoBehaviour
 
     private IEnumerator JumpLeeway()
     {
+        jump_leeway_timer = jump_leeway;
         while (jump_leeway_timer > 0f && mid_air)
         {
             jump_leeway_timer -= Time.deltaTime;
             yield return null;
         }
-
-        jump_leeway_timer = jump_leeway;
         if (mid_air && jump_ready) {
             jump_ready = false;
             air_ready = true;
         }
     }
-
     #endregion
 }

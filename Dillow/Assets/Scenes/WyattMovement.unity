@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657892, g: 0.4964127, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -738,6 +738,7 @@ GameObject:
   - component: {fileID: 961517813}
   - component: {fileID: 961517812}
   - component: {fileID: 961517811}
+  - component: {fileID: 961517817}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -870,6 +871,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961517809}
   m_Mesh: {fileID: 4300052, guid: d05d496cb4f43c14e80630addd23652e, type: 3}
+--- !u!114 &961517817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961517809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bccb45ffae44614b84935c900d9f88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 0}
+  dash_speed: 20
+  dash_timer: 1
 --- !u!1 &1214228670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,7 +1074,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215985397}
-  m_LocalRotation: {x: -0.06250359, y: -0.000000020568041, z: 0.000000006288775, w: 0.9980448}
+  m_LocalRotation: {x: -0.062503606, y: 0.000000020568047, z: -0.0000000062887597,
+    w: 0.9980447}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

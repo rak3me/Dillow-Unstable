@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ball_Controller : MonoBehaviour
+public class BallController : MonoBehaviour
 {
-    private Ball_Body body;
+    private BallBody body;
 
     private Vector3 move;
     // the world-relative desired move direction, calculated from the camForward and user input.
@@ -19,7 +19,7 @@ public class Ball_Controller : MonoBehaviour
     private void Awake()
     {
         // Set up the reference.
-        body = GetComponent<Ball_Body>();
+        body = GetComponent<BallBody>();
 
         // get the transform of the main camera
         if (Camera.main != null)
@@ -64,13 +64,13 @@ public class Ball_Controller : MonoBehaviour
 
     private void GetButton(ref int button, string axisName)
     {
-        button = (int)Input.GetAxisRaw(axisName);
+        button = Input.GetAxis(axisName) > 0f ? 1 : 0;
 
         if (button == 0)
         {
             button = Input.GetButtonUp(axisName) ? -1 : 0;
         }
-        else if (jump == 1)
+        else if (button == 1)
         {
             button = Input.GetButtonDown(axisName) ? 2 : 1;
         }
