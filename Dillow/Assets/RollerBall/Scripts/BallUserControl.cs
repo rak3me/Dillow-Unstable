@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.Vehicles.Ball
-{
+//namespace UnityStandardAssets.Vehicles.Ball
+//{
     public class BallUserControl : MonoBehaviour
     {
         private Ball ball; // Reference to the ball controller.
@@ -72,4 +72,4 @@ namespace UnityStandardAssets.Vehicles.Ball
             }
         }
     }
-}
+//}

@@ -13,11 +13,12 @@ public class Cannon : MonoBehaviour {
 
 
 
-	[SerializeField] private float speedupMultiplier = 1f;
+	[SerializeField] private float animationSpeedup = 1f;
+	[SerializeField] private AnimationCurve pathSpeedMultiplier;
 
     float aimAngle;
     float rotateAngle;
-	[SerializeField] private float velocity;
+	[SerializeField] public float speed;
 
 	[SerializeField] bool skipAnimations = false;
 	bool firing;
@@ -92,9 +93,9 @@ public class Cannon : MonoBehaviour {
 				//print("SUCK ME OFF");
 				firing = true;
 				projectile.gameObject.AddComponent<FollowPath>();
-				projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true);
+				projectile.GetComponent<FollowPath>().SetPath(pathNodes, speed, true);
 			} else {
-				StartCoroutine(Fire(aimAngle, rotateAngle, velocity, projectile));
+				StartCoroutine(Fire(aimAngle, rotateAngle, speed, projectile));
 			}
         }
     }
@@ -104,7 +105,7 @@ public class Cannon : MonoBehaviour {
 
         Transform barrel = transform.Find("Barrel");
 
-        yield return new WaitForSeconds (3f / speedupMultiplier);
+        yield return new WaitForSeconds (3f / animationSpeedup);
 
         if (null != music) {
             GetComponent<AudioSource> ().clip = music;
@@ -132,7 +133,7 @@ public class Cannon : MonoBehaviour {
 
         angleTraversed = 0;
 
-        yield return new WaitForSeconds(3f / speedupMultiplier);
+        yield return new WaitForSeconds(3f / animationSpeedup);
         timeElapsed += 3f;
 
 
@@ -163,7 +164,7 @@ public class Cannon : MonoBehaviour {
 
 		GetComponentInChildren<MouthController>().SetExpression(MouthController.MouthState.smile);
 
-		yield return new WaitForSeconds(2f / speedupMultiplier);
+		yield return new WaitForSeconds(2f / animationSpeedup);
 
 
 		if (null != mouthCamera) {
@@ -180,11 +181,11 @@ public class Cannon : MonoBehaviour {
 		//projectile.velocity = Vector3.zero;
 		//projectile.useGravity = false;
 		projectile.gameObject.AddComponent<FollowPath>();
-		projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true);
+		projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true, pathSpeedMultiplier);
 
 
         angleTraversed = 0;
-        yield return new WaitForSeconds(3f / speedupMultiplier);
+        yield return new WaitForSeconds(3f / animationSpeedup);
 
 
 
@@ -197,7 +198,7 @@ public class Cannon : MonoBehaviour {
         }
 
         angleTraversed = 0;
-        yield return new WaitForSeconds(3f / speedupMultiplier);
+        yield return new WaitForSeconds(3f / animationSpeedup);
 
         //print("Resetting angle " + rotateAngle);
         while (angleTraversed < rotateAngle) {
@@ -206,7 +207,7 @@ public class Cannon : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
 
-        yield return new WaitForSeconds(3f / speedupMultiplier);
+        yield return new WaitForSeconds(3f / animationSpeedup);
 
         gameObject.GetComponentInChildren<EnterCannon> ().Reset ();
         firing = false;

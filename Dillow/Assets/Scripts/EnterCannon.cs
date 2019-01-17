@@ -49,7 +49,7 @@ public class EnterCannon : MonoBehaviour {
         if (true == enteringCannon && null != player) {
             if (!trigger) {
                 transform.parent.Find("Barrel").GetComponent<Collider> ().enabled = false;
-                player.GetComponent<Rigidbody> ().useGravity = false;
+				player.GetComponent<Ball>().DisableGravity();
                 player.GetComponent<Rigidbody> ().velocity = Vector3.zero;
                 audioSource.clip = eatSound;
                 audioSource.Play ();
