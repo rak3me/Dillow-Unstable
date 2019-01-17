@@ -84,6 +84,9 @@ public class Cannon : MonoBehaviour {
 
     public void Fire (Rigidbody projectile) {
         if (false == inoperable && false == firing) {
+			if (null == projectile) {
+				//projectile = GameObject.FindWithTag()
+			}
 
 			if (null != cinematicCamera) {
 				cinematicCamera.SetActive(true);
