@@ -42,6 +42,7 @@ public class EnterCannon : MonoBehaviour {
         } else {
             audioSource = gameObject.GetComponent<AudioSource> ();
         }
+		audioSource.spatialBlend = 0.5f;
 	}
 	
 	// Update is called once per frame
@@ -67,8 +68,9 @@ public class EnterCannon : MonoBehaviour {
 
 			if (lerpTime > 2.75f) {
 				enteringCannon = false;
-				//mouth.SetExpression(MouthController.MouthState.close);
-				transform.parent.GetComponent<Cannon>().Fire(player.GetComponent<Rigidbody>());
+				mouth.SetExpression(MouthController.MouthState.close);
+				transform.parent.GetComponent<UnityEngine.Playables.PlayableDirector>().Play();
+				//transform.parent.GetComponent<Cannon>().Aim(player.GetComponent<Rigidbody>());
 			}
         }
 	}

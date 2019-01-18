@@ -3,38 +3,43 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour {
 
+	#region VARIABLES
+	//Calculation Info
+	Transform barrel;
     Vector3 origin;
     Vector3 target;
     Vector3 apex;
-    [SerializeField] private float rotateSpeed = 30;
+	Vector3 cross;
+	float aimAngle;
+	float rotateAngle;
+	bool clockwise;
 
-    [SerializeField] private AudioClip shotSound;
-    [SerializeField] private AudioClip music;
-
-
-
-	[SerializeField] private float animationSpeedup = 1f;
+	
+	//Time Info
+	[SerializeField] private float rotateSpeed = 30;
 	[SerializeField] private AnimationCurve pathSpeedMultiplier;
-
-    float aimAngle;
-    float rotateAngle;
 	[SerializeField] public float speed;
 
-	[SerializeField] bool skipAnimations = false;
+	
+	//Status Info
+	public bool aimingTriggered;
+	bool aiming;
+	public bool firingTriggered;
 	bool firing;
-    bool clockwise;
-	bool inoperable = false;
-
-    Vector3 cross;
-
-    float timeToWait;
-
+	public bool expressingTriggered;
+	bool expressing;
+	
+	bool inoperable;
+	float angleTraversed;
+	
+	
+	//Path info
 	CannonPath path;
 	Vector3[] pathNodes;
+	#endregion
 
-	public GameObject cinematicCamera;
-	public GameObject mouthCamera;
 
+	#region PREPROCESSING
 	// Use this for initialization
 	void Start () {
 		path = transform.Find("CannonPath").GetComponent<CannonPath>();
@@ -48,10 +53,18 @@ public class Cannon : MonoBehaviour {
 			inoperable = true;
 			return;
 		}
-		inoperable = false;
 
-		firing = false;
-        clockwise = true;
+		barrel = transform.Find("Barrel");
+		if (null == barrel) {
+			inoperable = true;
+		}
+		inoperable = false;
+		aiming = false;
+
+		CalculateAngles();
+	}
+	
+	void CalculateAngles () {
 		origin = path.start.position;
 		target = path.end.position;
 
@@ -67,62 +80,46 @@ public class Cannon : MonoBehaviour {
 
         if (cross.y < 0f) {
             clockwise = false;
-        }
-
-        //print ("Aim angle: " + aimAngle + "\tRotate angle: " + rotateAngle);
-
-        if (null == GetComponent<AudioSource> ()) {
-            gameObject.AddComponent<AudioSource> ();
-        }
-
-        timeToWait = -1f;
-
-		if (null != mouthCamera) {
-			mouthCamera.transform.SetParent(transform.Find("Barrel"));
+        } else {
+			clockwise = true;
 		}
 	}
+	#endregion
 
-    public void Fire (Rigidbody projectile) {
-        if (false == inoperable && false == firing) {
-			if (null == projectile) {
-				//projectile = GameObject.FindWithTag()
-			}
 
-			if (null != cinematicCamera) {
-				cinematicCamera.SetActive(true);
-			}
+	#region UPDATE
+	private void Update () {
+		TriggerHandler();
+	}
 
-			if (skipAnimations) {
-				//print("SUCK ME OFF");
-				firing = true;
-				projectile.gameObject.AddComponent<FollowPath>();
-				projectile.GetComponent<FollowPath>().SetPath(pathNodes, speed, true);
-			} else {
-				StartCoroutine(Fire(aimAngle, rotateAngle, speed, projectile));
-			}
-        }
-    }
+	void TriggerHandler () {
+		if (aimingTriggered && !aiming) {
+			StartCoroutine(Aim());
+		}
+		
+		if (firingTriggered && !firing) {
+			Fire();
+		}
+		
+		if (expressingTriggered && !expressing) {
+			SetExpression(MouthController.MouthState.smile);
+		}
+	}
+	#endregion
+	
 
-    IEnumerator Fire (float aimAngle, float rotateAngle, float velocity, Rigidbody projectile) {
-        firing = true;
+	#region TRIGGERED EVENTS
+	IEnumerator Aim (Rigidbody projectile = null) {
+        aiming = true;
 
-        Transform barrel = transform.Find("Barrel");
+		if (null == projectile) {
+			projectile = GameManager.player.GetComponent<Rigidbody>();
+		}
+		
+		yield return new WaitForSeconds (3f);
 
-        yield return new WaitForSeconds (3f / animationSpeedup);
+        angleTraversed = 0;
 
-        if (null != music) {
-            GetComponent<AudioSource> ().clip = music;
-            GetComponent<AudioSource> ().Play ();
-            timeToWait = music.length;
-        }
-
-        float timeElapsed = 0f;
-
-        //print ("Clockwise: " + clockwise);
-
-        float angleTraversed = 0;
-
-        //print("Rotating " + rotateAngle);
         while (angleTraversed < rotateAngle) {
             transform.Rotate(transform.up, (clockwise ? 1 : -1) * rotateSpeed * Time.deltaTime);
             angleTraversed += rotateSpeed * Time.deltaTime;
@@ -131,18 +128,13 @@ public class Cannon : MonoBehaviour {
             projectile.velocity = Vector3.zero;
 
             yield return new WaitForEndOfFrame();
-            timeElapsed += Time.deltaTime;
         }
 
         angleTraversed = 0;
 
-        yield return new WaitForSeconds(3f / animationSpeedup);
-        timeElapsed += 3f;
-
-
-        //print("Aiming " + aimAngle);
+        yield return new WaitForSeconds(3f);
+        
         while (angleTraversed < aimAngle) {
-            //barrel.Rotate(barrel.transform.right, rotateSpeed * Time.deltaTime);
             barrel.localEulerAngles += Vector3.right * rotateSpeed * Time.deltaTime;
             angleTraversed += rotateSpeed * Time.deltaTime;
 
@@ -150,80 +142,20 @@ public class Cannon : MonoBehaviour {
             projectile.velocity = Vector3.zero;
 
             yield return new WaitForEndOfFrame();
-            timeElapsed += Time.deltaTime;
         }
-
-		yield return new WaitForSeconds(Mathf.Max(5f, timeToWait - timeElapsed - 2f));
-
-		if (null != cinematicCamera) {
-			cinematicCamera.SetActive(false);
-		}
-
-		if (null != mouthCamera) {
-			mouthCamera.SetActive(true);
-		}
-
-		yield return new WaitForSeconds(2f);
-
-		GetComponentInChildren<MouthController>().SetExpression(MouthController.MouthState.smile);
-
-		yield return new WaitForSeconds(2f / animationSpeedup);
-
-
-		if (null != mouthCamera) {
-			mouthCamera.SetActive(false);
-		}
-		//print("BOOM! " + velocity + " MPS");
-
-        if (null != shotSound) {
-            GetComponent<AudioSource> ().clip = shotSound;
-            GetComponent<AudioSource> ().Play ();
-        }
-
-		//projectile.position = barrel.position;
-		//projectile.velocity = Vector3.zero;
-		//projectile.useGravity = false;
-		projectile.gameObject.AddComponent<FollowPath>();
-		projectile.GetComponent<FollowPath>().SetPath(pathNodes, velocity, true, pathSpeedMultiplier);
-
-
-        angleTraversed = 0;
-        yield return new WaitForSeconds(3f / animationSpeedup);
-
-
-
-		//print("Resetting aim " + aimAngle);
-        while (angleTraversed < aimAngle) {
-            //barrel.Rotate(barrel.transform.right, -rotateSpeed * Time.deltaTime);
-            barrel.localEulerAngles += Vector3.right * -rotateSpeed * Time.deltaTime;
-            angleTraversed += rotateSpeed * Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-
-        angleTraversed = 0;
-        yield return new WaitForSeconds(3f / animationSpeedup);
-
-        //print("Resetting angle " + rotateAngle);
-        while (angleTraversed < rotateAngle) {
-            transform.Rotate(transform.up, (clockwise ? -1 : 1) * rotateSpeed  * Time.deltaTime);
-            angleTraversed += rotateSpeed * Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return new WaitForSeconds(3f / animationSpeedup);
-
-        gameObject.GetComponentInChildren<EnterCannon> ().Reset ();
-        firing = false;
     }
 
-    //private void OnDrawGizmos () {
-    //    Gizmos.color = Color.red;
-    //    Transform barrel = transform.Find("Barrel");
-    //    Gizmos.DrawRay(barrel.position, barrel.forward * velocity);
-    //    Gizmos.DrawSphere(apex, 10f);
-    //    Gizmos.DrawSphere(target, 3f);
-
-    //    //Gizmos.color = Color.green;
-    //    //Gizmos.DrawRay(transform.position, transform.position + barrel.forward * 50);
-    //}
+	void SetExpression (MouthController.MouthState state) {
+		expressing = true;
+		GetComponentInChildren<MouthController>().SetExpression(state);
+	}
+	
+	void Fire (Rigidbody projectile = null) {
+		firing = true;
+		if (null == projectile) {
+			projectile = GameManager.player.GetComponent<Rigidbody>();
+		}
+		projectile.gameObject.AddComponent<FollowPath>().SetPath(pathNodes, speed, true, pathSpeedMultiplier);
+	}
+	#endregion
 }
