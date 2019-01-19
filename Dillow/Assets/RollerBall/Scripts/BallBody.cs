@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void MoveDel(bool move, Vector3 dir, int jump, int action);
+public delegate void EndDel();
 
 [RequireComponent(typeof(Rigidbody))]
 public class BallBody : MonoBehaviour
 {
 
     [Header("Rolling")]
-    public float move_power = 200f;
+    public float roll_power = 200f;
+    public float move_power = 10f;
     public float max_roll_speed = 50f;
     public float max_speed = 50f;
 
@@ -25,8 +27,10 @@ public class BallBody : MonoBehaviour
     private float jump_multiplier = 2f;
     private float fall_multiplier = 2.5f;
     private Vector3 jump_vector;
+    private Vector3 speed_vector;
 
     public event MoveDel MoveEvent;
+    public event EndDel EndEvent;
     [HideInInspector ]public bool can_move = true;
     private int priority = 0;
 
@@ -50,7 +54,13 @@ public class BallBody : MonoBehaviour
         MoveEvent += OnJump;
     }
 
+
     #region MOVEMENT
+    private void Update()
+    {
+        speed_vector = rb.velocity;
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -75,7 +85,7 @@ public class BallBody : MonoBehaviour
 
     public void Input(bool move, Vector3 dir, int jump, int action)
     {
-       if (can_move)
+       if (can_move && MoveEvent != null)
         {
             MoveEvent(move, dir, jump, action);
         }
@@ -100,7 +110,7 @@ public class BallBody : MonoBehaviour
     {
        if (move)
         {
-            rb.AddTorque(new Vector3(dir.z, 0, -dir.x) * move_power);
+            rb.AddTorque(new Vector3(dir.z, 0, -dir.x) * roll_power);
             if (mid_air)
                 if (CheckPriority(1))
                     rb.AddForce(dir * move_power);
@@ -111,8 +121,6 @@ public class BallBody : MonoBehaviour
         {
             if (Vector3.Cross(rb.angularVelocity, rb.velocity).y > 0f)
                 jump_vector = (-rb.velocity.normalized + Vector3.up * 2f).normalized;
-            else
-                jump_vector = (rb.velocity.normalized + Vector3.up * 0.5f).normalized;
         }
         else
             jump_vector = Vector3.up;
@@ -164,6 +172,12 @@ public class BallBody : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         collision_count++;
+
+        if (EndEvent != null && (collision.impulse.magnitude > 20f) && 
+            (Vector3.Angle(speed_vector, -collision.contacts[0].normal)) < 90)
+        {
+            EndEvent();
+        }
     }
 
     private void OnCollisionExit(Collision collision)

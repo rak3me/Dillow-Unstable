@@ -2,53 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BallBody))]
-public class BallDash : MonoBehaviour
+public class BallDash : BallAttackAbility
 {
 
-    [HideInInspector] public BallBody body;
-    private bool dash_ready = true;
-    public float dash_speed;
-    public float dash_timer = 1f;
-    private Vector3 dash_dir;
-
-    // Start is called before the first frame update
-    void Start()
+    public override void OnAction(bool move, Vector3 dir, int jump, int action)
     {
-        body = GetComponent<BallBody>();
-        body.MoveEvent += OnDash;
-        dash_dir = Vector3.zero;
-    }
-
-    public void OnDash(bool move, Vector3 dir, int jump, int action)
-    {
-        if (action == 2 && move && dash_ready && body.CheckPriority(2))
+        if (action == 2 && move && action_ready && body.CheckPriority(2))
         {
-            Debug.Log(Vector3.Angle(dir, body.rb.velocity.normalized));
-            dash_dir = (Vector3.Angle(dir, body.rb.velocity.normalized) < 90f) 
-                ? (dir + body.rb.velocity.normalized) / 2: dir;
+            attack_dir = (Vector3.Angle(dir, body.rb.velocity.normalized) < 70f)
+                ? body.rb.velocity.normalized : dir;
 
             if (body.lock_enemy)
             {
                 Vector3 lock_dir = (body.transform.position - body.lock_enemy.transform.position).normalized;
-                dash_dir = (Vector3.Angle(dash_dir, lock_dir) < 15f) 
-                    ? lock_dir : dash_dir;
+                attack_dir = (Vector3.Angle(attack_dir, lock_dir) < 50f)
+                    ? lock_dir : attack_dir;
             }
 
-            Dash();
+            StartCoroutine(Action());
         }
     }
 
-    private void Dash()
+    protected override void StartAction()
     {
-        body.rb.velocity = dash_dir * dash_speed;
-        StartCoroutine(DashRecharge());
+        body.rb.velocity = attack_dir * attack_speed;
+        intensity = 1f;
+        if (fx_anim)
+            fx_anim.SetTrigger("Start");
+        //body.collision_state.AddState(CollisionState.attacking);
     }
 
-    private IEnumerator DashRecharge()
+    protected override void EndAction()
     {
-        dash_ready = false;
-        yield return new WaitForSeconds(dash_timer);
-        dash_ready = true;
+        intensity = 0f;
+        if (fx_anim)
+            fx_anim.SetTrigger("Stop");
+        //body.collision_state.RemoveState(CollisionState.attacking);
+        StartCoroutine(Recharge());
     }
 }
