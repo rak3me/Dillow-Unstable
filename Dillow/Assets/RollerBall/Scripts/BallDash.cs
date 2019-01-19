@@ -27,16 +27,14 @@ public class BallDash : BallAttackAbility
     {
         body.rb.velocity = attack_dir * attack_speed;
         intensity = 1f;
-        if (fx_anim)
-            fx_anim.SetTrigger("Start");
+        fx_anim?.SetTrigger("Start");
         //body.collision_state.AddState(CollisionState.attacking);
     }
 
     protected override void EndAction()
     {
         intensity = 0f;
-        if (fx_anim)
-            fx_anim.SetTrigger("Stop");
+        fx_anim?.SetTrigger("Stop");
         //body.collision_state.RemoveState(CollisionState.attacking);
         StartCoroutine(Recharge());
     }

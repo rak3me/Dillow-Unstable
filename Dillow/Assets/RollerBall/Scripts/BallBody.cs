@@ -27,7 +27,7 @@ public class BallBody : MonoBehaviour
     private float jump_multiplier = 2f;
     private float fall_multiplier = 2.5f;
     private Vector3 jump_vector;
-    private Vector3 speed_vector;
+    [HideInInspector] public Vector3 speed_vector;
 
     public event MoveDel MoveEvent;
     public event EndDel EndEvent;
@@ -90,6 +90,11 @@ public class BallBody : MonoBehaviour
         {
             MoveEvent(move, dir, jump, action);
         }
+    }
+
+    public void End()
+    {
+        EndEvent?.Invoke();
     }
 
     public bool CheckPriority(int priority, bool set = false)
@@ -174,11 +179,13 @@ public class BallBody : MonoBehaviour
     {
         collision_count++;
 
+        /*
         if (EndEvent != null && (collision.impulse.magnitude > 20f) && 
             (Vector3.Angle(speed_vector, -collision.contacts[0].normal)) < 90)
         {
             EndEvent();
         }
+        */
     }
 
     private void OnCollisionExit(Collision collision)
