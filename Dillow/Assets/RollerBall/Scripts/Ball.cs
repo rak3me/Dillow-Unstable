@@ -16,6 +16,7 @@ using UnityEngine;
 		[SerializeField] private float lowJumpMultiplier = 2f;
 		[SerializeField] private float skidMultiplier = 4f;
 		[SerializeField] private float waterPowerMultiplier = 0.5f;
+	    [SerializeField] private bool enableBuyoancy = false;
 
 		private const float k_GroundRayLength = 1f; // The length of the ray to check if the ball is grounded.
         private Rigidbody m_Rigidbody;
@@ -40,6 +41,7 @@ using UnityEngine;
         }
 
 		public void FixedUpdate () {
+		if (!enableBuyoancy) return;
 			float amountAboveSeaLevel = m_Rigidbody.position.y - 6.25f;
 			if (amountAboveSeaLevel < 0f) { //Underwater
 				inWater = true;
