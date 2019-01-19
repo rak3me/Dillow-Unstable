@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void MoveDel(bool move, Vector3 dir, int jump, int action);
@@ -9,6 +8,7 @@ public delegate void EndDel();
 public class BallBody : MonoBehaviour
 {
 
+    #region MOVEMENT VARIABLES
     [Header("Rolling")]
     public float roll_power = 200f;
     public float move_power = 10f;
@@ -34,14 +34,15 @@ public class BallBody : MonoBehaviour
     [HideInInspector ]public bool can_move = true;
     private int priority = 0;
 
-    [HideInInspector] public Rigidbody rb;
-    [Header("Locking")]
-    public GameObject lock_enemy;
-
     [HideInInspector] public bool jump_ready;
     [HideInInspector] public bool just_jumped;
     [HideInInspector] public bool mid_air;
     [HideInInspector] public bool air_ready;
+    #endregion
+
+    [HideInInspector] public Rigidbody rb;
+    [Header("Locking")]
+    public GameObject lock_enemy;
 
     // Start is called before the first frame update
     void Start()
@@ -49,11 +50,11 @@ public class BallBody : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.maxAngularVelocity = max_roll_speed;
         jump_vector = Vector3.up;
+        speed_vector = Vector3.zero;
         jump_leeway_timer = jump_leeway;
         MoveEvent += OnMove;
         MoveEvent += OnJump;
     }
-
 
     #region MOVEMENT
     private void Update()
